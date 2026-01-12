@@ -1,0 +1,49 @@
+body {
+    background-color: lightgrey;
+    margin: 0;
+    min-height: 100vh;
+
+    display: flex;
+    justify-content: center; 
+}
+p {
+    color: #285F99;
+    font-size: 18px;
+}
+h1, p {
+    text-align: center;
+}
+hr {
+    background-color: #285F99;
+    border-color: #285F99;
+    border-width: 1.5px;
+    width: 80%; 
+    margin-left: auto; 
+    margin-right: auto; 
+}
+#content {
+
+}
+.list {
+    list-style-type: none;
+}
+#topics {
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+}
+img {
+    max-width: 350px;
+    height: auto;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 25px;
+}
+ul {
+    padding: 0;
+    margin: 0;
+}
+h2 {
+    text-align: center;
+}
