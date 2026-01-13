@@ -1,0 +1,9 @@
+a {
+    text-decoration: none;
+    font-size: 16px;
+    color: purple;
+}
+a:hover {
+    text-decoration: underline;
+    color: pink;
+}
