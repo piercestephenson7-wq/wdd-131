@@ -32,6 +32,43 @@
                 <li>Without JavaScript nothing on the page responds dynamically to user actions.</li>
             </ul>
         </div>
+            <label for="webdevlist">Choose One:</label>
+            <select name="code" id="webdevlist">
+                <option>Choose One:</option>
+                <option value="html">HTML</option>
+                <option value="css">CSS</option>
+                <option value="js">JavaScript</option>
+            </select>                   
+            <script>            
+                let selectElem = document.getElementById('webdevlist');
+
+                selectElem.addEventListener('change', function(){
+                    let codeValue = selectElem.value;
+                    if(codeValue === "html") {
+                        changeColorHtml();
+                    } else if(codeValue === "css") {
+                        changeColorCss();
+                    } else if(codeValue === "js") {
+                        changeColorJava();
+                    }
+                    else {
+                        resetColor();
+                    }
+                    console.log(codeValue);
+                })         
+                function changeColorHtml() {
+                    document.body.style.backgroundColor = "grey";
+                }   
+                function changeColorCss() {
+                    document.body.style.backgroundColor = "blue";
+                }
+                function changeColorJava() {
+                    document.body.style.backgroundColor = "yellow";
+                }
+                function resetColor() {
+                    document.body.style.backgroundColor = "#ddd";
+                }
+            </script>           
     </div>
 </body>
 </html>
