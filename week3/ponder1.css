@@ -25,7 +25,7 @@ footer {
 
 h1 {
   text-align: center;
-  margin-right: 40px; /* Make room for hamburger button */
+  margin-right: 40px; 
 }
 
 main {
@@ -40,7 +40,7 @@ section {
   border: 1px solid #ccc;
 }
 
-/* Hamburger Button Styles */
+
 .menu-btn {
   cursor: pointer;
   border: none;
@@ -59,7 +59,6 @@ section {
   transition: 0.3s;
 }
 
-/* Navigation Styles - Mobile First */
 nav {
   position: absolute;
   top: 100%;
@@ -68,12 +67,12 @@ nav {
   border: 1px solid #ccc;
   padding: 10px;
   z-index: 1000;
-  display: none; /* Hidden by default on mobile */
+  display: none; 
   margin-top: 0.5rem;
 }
 
 nav.show {
-  display: block; /* Show when toggled */
+  display: block; 
 }
 
 nav a {
@@ -99,7 +98,7 @@ footer {
   text-align: center;
 }
 
-/* Tablet and Desktop Styles */
+
 @media screen and (min-width: 768px) {
   main {
     flex-direction: row;
@@ -107,18 +106,17 @@ footer {
   }
 
   h1 {
-    margin-right: 0; /* Remove margin on larger screens */
+    margin-right: 0; 
   }
 
-  /* Hide hamburger button on desktop */
+
   .menu-btn {
     display: none;
   }
 
-  /* Show navigation inline on desktop */
   nav {
     position: static;
-    display: block !important; /* Always visible on desktop */
+    display: block !important; 
     background-color: transparent;
     border: none;
     padding: 0;
