@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <header>
+        <h1>Cool Pics📷</h1>
+            <button class="menu-btn">
+                <h4>Menu</h4>
+                <div class="bar1"></div>
+                <div class="bar2"></div>
+                <div class="bar3"></div>
+            </button>
+            <nav>
+                <ul>
+                    <li><a href="#">Home</a></li>
+                    <li><a href="#">People</a></li>
+                    <li><a href="#">Places</a></li>
+                    <li><a href="#">About</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </nav>
+    </header>
+    <main>
+        <h2>Current Work</h2>
+        <div>
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+            <img src="coolpic.jpg" alt="picture">
+        </div>
+    </main>
+    <footer>
+        <p> &copy; This is not a real website</p>
+    </footer>
+
+    <script>
+        const menuBtn = document.querySelector('.menu-btn');
+        const navMenu = document.querySelector('header nav ul');
+
+        menuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            navMenu.classList.toggle('show');
+            menuBtn.classList.toggle('open');
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('header nav') && !e.target.closest('.menu-btn')) {
+                navMenu.classList.remove('show');
+                menuBtn.classList.remove('open');
+            }
+        });
+    </script>
+</body>
+</html>

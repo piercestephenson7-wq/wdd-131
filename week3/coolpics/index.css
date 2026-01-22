@@ -1,0 +1,141 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+header {
+    background-color: #4287f5;
+    color: white;
+    padding: 1rem;
+    text-align: center;
+}
+
+ header h1 {
+    margin-bottom: 1rem;
+ }
+
+ header a {
+    color: white;
+    text-decoration: none;
+}
+
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    cursor: pointer;
+    padding: 0.5rem;
+}
+
+.menu-btn h4 {
+    margin-bottom: 0.5rem;
+}
+
+.bar1, .bar2, .bar3 {
+    width: 25px;
+    height: 3px;
+    background-color: white;
+    margin: 4px 0;
+    transition: 0.4s;
+}
+
+.menu-btn.open .bar1 {
+    transform: rotate(-45deg) translate(-5px, 6px);
+}
+
+.menu-btn.open .bar2 {
+    opacity: 0;
+}
+
+.menu-btn.open .bar3 {
+    transform: rotate(45deg) translate(-5px, -6px);
+}
+
+header nav ul {
+    list-style: none;
+    display: none;
+    margin: 0 auto;
+    max-width: 300px;
+}
+
+header nav ul.show {
+    display: block;
+}
+
+header nav ul li {
+    padding: 0.75rem 0;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+header nav ul li a {
+    display: block;
+    padding: 0.5rem;
+}
+
+header nav ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+footer {
+    background-color: #4287f5;
+    padding: 1rem;
+    text-align: center;
+}
+
+img {
+    box-shadow: 4px 4px 8px rgba(0, 0, 0, 0.5);
+    border: solid black 2px;
+    margin: 15px;
+    max-width: 100%;
+    height: auto;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    background-color: lightgrey;
+}
+
+main h2 {
+    margin-bottom: 1rem;
+    text-align: center;
+}
+
+main div {
+    display: flex;
+    flex-direction: column;
+}
+
+@media screen and (min-width: 768px) {
+    main div {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+}
+
+@media screen and (min-width: 1200px) {
+    main div {
+        flex: 1 1 30%;
+    }
+
+    main {
+        flex-wrap: nowrap;
+    }
+
+    header nav ul {
+        display: flex !important;
+        flex-direction: row;
+        gap: 2rem;
+    }
+
+    header nav ul li {
+        padding: 0;
+        border-bottom: none;
+    }
+
+    .menu-btn {
+        display: none;
+    }
+}
