@@ -1,0 +1,1324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Birthday Present Consultant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #050816;
+      --bg-alt: #0b1020;
+      --card: #111827;
+      --accent: #6366f1;
+      --accent-soft: rgba(99, 102, 241, 0.15);
+      --accent-strong: rgba(129, 140, 248, 0.4);
+      --border-subtle: rgba(148, 163, 184, 0.25);
+      --text-main: #e5e7eb;
+      --text-soft: #9ca3af;
+      --danger: #f97373;
+      --radius-lg: 18px;
+      --radius-sm: 10px;
+      --shadow-soft: 0 22px 35px rgba(15, 23, 42, 0.8);
+      --shadow-glow: 0 0 40px rgba(129, 140, 248, 0.35);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #111827 0, #020617 40%, #000 100%);
+      color: var(--text-main);
+      display: flex;
+      align-items: stretch;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 1200px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.1fr) minmax(0, 1.3fr);
+      gap: 20px;
+    }
+
+    @media (max-width: 960px) {
+      body {
+        padding: 16px;
+      }
+      .app-shell {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .panel {
+      background: linear-gradient(145deg, rgba(15,23,42,0.97), rgba(15,23,42,0.92));
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-subtle);
+      box-shadow: var(--shadow-soft);
+      padding: 22px 22px 20px;
+      backdrop-filter: blur(16px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(94, 234, 212, 0.09), transparent 55%),
+        radial-gradient(circle at 100% 0%, rgba(129, 140, 248, 0.14), transparent 55%);
+      opacity: 0.7;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .panel-inner {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .title-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .title {
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.03em;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .title-pill {
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 140, 248, 0.35);
+      background: linear-gradient(135deg, rgba(37,99,235,0.35), rgba(129,140,248,0.25));
+      box-shadow: var(--shadow-glow);
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: #e0e7ff;
+    }
+
+    .subtitle {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+    }
+
+    .badge-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+    }
+
+    .badge-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 999px;
+      background: radial-gradient(circle at 30% 30%, #a5b4fc, #4f46e5);
+      box-shadow: 0 0 14px rgba(129, 140, 248, 0.8);
+    }
+
+    .badge-soft {
+      padding: 3px 9px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.75);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 4px;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .field-row {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .field-row {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: #e5e7eb;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    label span.hint {
+      font-size: 0.74rem;
+      color: var(--text-soft);
+      font-weight: 400;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(148, 163, 184, 0.4);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-main);
+      padding: 8px 10px;
+      font-size: 0.86rem;
+      resize: vertical;
+      min-height: 0;
+      outline: none;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, background 0.15s ease;
+    }
+
+    textarea {
+      min-height: 80px;
+      max-height: 220px;
+      line-height: 1.45;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: rgba(148, 163, 184, 0.7);
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: rgba(129, 140, 248, 0.85);
+      box-shadow: 0 0 0 1px rgba(129, 140, 248, 0.5);
+      background: radial-gradient(circle at top left, rgba(15,23,42,0.96), rgba(15,23,42,0.98));
+    }
+
+    .budget-row {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.2fr);
+      gap: 10px;
+    }
+
+    @media (max-width: 720px) {
+      .budget-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      }
+      .budget-row > :last-child {
+        grid-column: 1 / -1;
+      }
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-row input[type="range"] {
+      flex: 1;
+      accent-color: var(--accent);
+    }
+
+    .slider-value {
+      font-size: 0.78rem;
+      color: var(--text-soft);
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .chip {
+      padding: 3px 9px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      border: 1px solid rgba(148, 163, 184, 0.45);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+      cursor: pointer;
+      transition: background 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+      user-select: none;
+    }
+
+    .chip.active {
+      background: rgba(129, 140, 248, 0.2);
+      color: #e5e7eb;
+      border-color: rgba(129, 140, 248, 0.9);
+    }
+
+    .helper-text {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+    }
+
+    .actions-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 10px;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .primary-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 9px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(129, 140, 248, 0.9);
+      background: radial-gradient(circle at 0% 0%, #22c1c3, transparent 65%),
+                  linear-gradient(135deg, #4f46e5, #6366f1);
+      color: #e5e7eb;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      box-shadow: var(--shadow-glow);
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .primary-btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(1.05);
+      box-shadow: 0 0 24px rgba(129, 140, 248, 0.8);
+    }
+
+    .primary-btn:active {
+      transform: translateY(0);
+      filter: brightness(0.96);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .primary-btn[disabled] {
+      opacity: 0.7;
+      cursor: default;
+      transform: none;
+      box-shadow: none;
+      filter: none;
+    }
+
+    .secondary-info {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+    }
+
+    .secondary-info strong {
+      color: #e5e7eb;
+      font-weight: 500;
+    }
+
+    .status-text {
+      font-size: 0.8rem;
+      color: var(--text-soft);
+      margin-top: 8px;
+      min-height: 1em;
+    }
+
+    .status-text.error {
+      color: var(--danger);
+    }
+
+    .results-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .results-title {
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .results-meta {
+      font-size: 0.76rem;
+      color: var(--text-soft);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.85);
+      font-size: 0.72rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .pill-label {
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    .pill-value {
+      color: #e5e7eb;
+    }
+
+    .results-container {
+      margin-top: 12px;
+      display: grid;
+      gap: 10px;
+      max-height: calc(100vh - 220px);
+      overflow: auto;
+      padding-right: 2px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(148, 163, 184, 0.6) transparent;
+    }
+
+    .results-container::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .results-container::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .results-container::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.5);
+      border-radius: 999px;
+    }
+
+    .suggestion-card {
+      border-radius: 16px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: linear-gradient(135deg, rgba(15, 23, 42, 0.97), rgba(15, 23, 42, 0.94));
+      padding: 12px 12px 11px;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .suggestion-card::before {
+      content: "";
+      position: absolute;
+      inset: -40%;
+      background:
+        radial-gradient(circle at 0% 0%, rgba(129, 140, 248, 0.23), transparent 55%),
+        radial-gradient(circle at 100% 100%, rgba(56, 189, 248, 0.16), transparent 50%);
+      opacity: 0.5;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .suggestion-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .suggestion-header {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: baseline;
+      margin-bottom: 4px;
+    }
+
+    .suggestion-title {
+      font-size: 0.98rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .suggestion-index {
+      font-size: 0.74rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.6);
+      background: rgba(15, 23, 42, 0.9);
+      color: var(--text-soft);
+    }
+
+    .suggestion-tags {
+      display: inline-flex;
+      flex-wrap: wrap;
+      gap: 5px;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      align-items: center;
+    }
+
+    .tag {
+      padding: 2px 7px;
+      border-radius: 999px;
+      border: 1px solid rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.9);
+    }
+
+    .field-label-inline {
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--text-soft);
+      margin-bottom: 1px;
+    }
+
+    .suggestion-section {
+      font-size: 0.83rem;
+      color: #e5e7eb;
+    }
+
+    .suggestion-section + .suggestion-section {
+      margin-top: 4px;
+    }
+
+    .muted {
+      color: var(--text-soft);
+    }
+
+    .price-range {
+      font-weight: 500;
+      color: #e5e7eb;
+    }
+
+    .link-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 2px;
+    }
+
+    .link-pill {
+      font-size: 0.78rem;
+      padding: 3px 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(56, 189, 248, 0.7);
+      background: rgba(8, 47, 73, 0.85);
+      color: #e0f2fe;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .link-pill span {
+      text-decoration: underline;
+      text-decoration-style: dotted;
+    }
+
+    .empty-state {
+      font-size: 0.85rem;
+      color: var(--text-soft);
+      padding: 12px 10px;
+      border-radius: 14px;
+      border: 1px dashed rgba(148, 163, 184, 0.5);
+      background: rgba(15, 23, 42, 0.85);
+    }
+
+    .footer-note {
+      margin-top: 12px;
+      font-size: 0.7rem;
+      color: var(--text-soft);
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+  <div class="app-shell">
+    <section class="panel">
+      <div class="panel-inner">
+        <header class="panel-header">
+          <div class="title-group">
+            <div class="title">
+              Birthday Present Consultant
+              <span class="title-pill">Context‑Aware Gift Design</span>
+            </div>
+            <p class="subtitle">
+              Paste what you know about the person, set a budget and tone, and get
+              crafted birthday gift ideas that actually fit.
+            </p>
+          </div>
+          <div class="badge-row">
+            <span class="badge-dot"></span>
+            <span class="badge-soft">Birthday focus</span>
+          </div>
+        </header>
+
+        <form id="gift-form">
+          <div class="field-row">
+            <div class="field-group">
+              <label>
+                Recipient name
+                <span class="hint">(nicknames welcome)</span>
+              </label>
+              <input
+                type="text"
+                id="recipientName"
+                placeholder="e.g. Sam, my younger brother"
+                autocomplete="off"
+              />
+            </div>
+            <div class="field-group">
+              <label>
+                Relationship
+              </label>
+              <input
+                type="text"
+                id="relationship"
+                placeholder="e.g. partner, close friend, teammate"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>
+                Approx. age / life stage
+              </label>
+              <input
+                type="text"
+                id="ageStage"
+                placeholder="e.g. 29, early 30s, retired, college"
+                autocomplete="off"
+              />
+            </div>
+            <div class="field-group">
+              <label>
+                Where they live
+                <span class="hint">(city, region or climate)</span>
+              </label>
+              <input
+                type="text"
+                id="location"
+                placeholder="e.g. NYC, small town, rainy climate"
+                autocomplete="off"
+              />
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>
+              Budget
+              <span class="hint">(approximate is fine)</span>
+            </label>
+            <div class="budget-row">
+              <input
+                type="number"
+                id="budgetMin"
+                placeholder="Min (optional)"
+                min="0"
+              />
+              <input
+                type="number"
+                id="budgetMax"
+                placeholder="Max (e.g. 100)"
+                min="0"
+              />
+              <div class="slider-row">
+                <input
+                  type="range"
+                  id="budgetComfort"
+                  min="1"
+                  max="5"
+                  value="3"
+                />
+                <span class="slider-value" id="budgetComfortLabel">
+                  Comfort: medium
+                </span>
+              </div>
+            </div>
+            <p class="helper-text">
+              Use the slider to indicate how comfortable you are going slightly
+              under/over the number in your head.
+            </p>
+          </div>
+
+          <div class="field-group">
+            <label>
+              What are they into?
+              <span class="hint">(interests, hobbies, fandoms, aesthetic, routines)</span>
+            </label>
+            <textarea
+              id="interests"
+              placeholder="e.g. indie games, cooking, film photography, long walks, learning languages, cozy nights in"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
+            <label>
+              Hard no / avoid
+              <span class="hint">(allergies, topics, categories, previous fails)</span>
+            </label>
+            <textarea
+              id="avoid"
+              placeholder="e.g. no scented candles, hates clutter, allergic to cats, not into alcohol"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
+            <label>
+              Past gifts &amp; reactions
+            </label>
+            <textarea
+              id="pastGifts"
+              placeholder="e.g. loved a weekend trip, board games go over well, last year I did a photo book and they cried (in a good way)"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
+            <label>
+              Personality snapshot
+            </label>
+            <textarea
+              id="personality"
+              placeholder="e.g. introverted but warm, thoughtful, a bit chaotic, loves inside jokes and things that feel tailored to them"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
+            <label>
+              How should the present feel?
+              <span class="hint">(tone &amp; style)</span>
+            </label>
+            <div class="chip-row" id="toneChips">
+              <button type="button" class="chip" data-tone="playful">Playful &amp; fun</button>
+              <button type="button" class="chip" data-tone="romantic">Romantic &amp; thoughtful</button>
+              <button type="button" class="chip" data-tone="elegant">Elegant &amp; minimal</button>
+              <button type="button" class="chip" data-tone="cozy">Cozy &amp; comforting</button>
+              <button type="button" class="chip" data-tone="adventurous">Adventurous &amp; bold</button>
+            </div>
+            <textarea
+              id="toneCustom"
+              placeholder="In your own words: e.g. meaningful but not too serious, something that feels like 'them', more experience than object…"
+            ></textarea>
+          </div>
+
+          <div class="field-group">
+            <label>
+              References &amp; context
+              <span class="hint">(paste chats, bios, notes, or links)</span>
+            </label>
+            <textarea
+              id="references"
+              placeholder="Drop in anything that captures who they are: DMs, about-me blurb, a playlist, social profile link, etc."
+            ></textarea>
+            <p class="helper-text">
+              You can include rough text from other places; this stays local in your browser.
+            </p>
+          </div>
+
+          <div class="field-row">
+            <div class="field-group">
+              <label>
+                How many ideas?
+              </label>
+              <input
+                type="number"
+                id="ideaCount"
+                min="1"
+                max="6"
+                value="3"
+              />
+              <p class="helper-text">
+                3–4 is a nice sweet spot for depth without overload.
+              </p>
+            </div>
+            <div class="field-group">
+              <label>
+                Emphasis
+              </label>
+              <select id="emphasis">
+                <option value="balanced">Balanced mix</option>
+                <option value="experiences">More experiences</option>
+                <option value="physical">More physical items</option>
+                <option value="sentimental">Sentimental / memory-making</option>
+                <option value="practical">Practical but still thoughtful</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="actions-row">
+            <button type="submit" class="primary-btn" id="generateBtn">
+              <span>Generate birthday gift ideas</span>
+            </button>
+            <p class="secondary-info">
+              <strong>Tip:</strong> More specific context → more tailored suggestions.
+            </p>
+          </div>
+          <div class="status-text" id="statusText"></div>
+        </form>
+
+        <div class="footer-note">
+          Crafted locally in your browser. Created using AALang and Gab.
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="panel-inner">
+        <header class="results-header">
+          <div>
+            <div class="results-title">Suggestions</div>
+            <div class="results-meta">
+              <span>Birthday‑focused, context‑aware ideas</span>
+              <span class="pill">
+                <span class="pill-label">Mode</span>
+                <span class="pill-value" id="modeLabel">Drafting</span>
+              </span>
+            </div>
+          </div>
+        </header>
+
+        <div class="results-container" id="resultsContainer">
+          <div class="empty-state" id="emptyState">
+            Once you fill in some context and hit “Generate”, this side will fill
+            with gift ideas. Each card shows a short name, what the gift is,
+            why it fits this specific person, a rough price band, and links and
+            personalization angles you can run with.
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    (function () {
+      const form = document.getElementById("gift-form");
+      const toneChips = document.getElementById("toneChips");
+      const budgetComfort = document.getElementById("budgetComfort");
+      const budgetComfortLabel = document.getElementById("budgetComfortLabel");
+      const generateBtn = document.getElementById("generateBtn");
+      const statusText = document.getElementById("statusText");
+      const resultsContainer = document.getElementById("resultsContainer");
+      const emptyState = document.getElementById("emptyState");
+      const modeLabel = document.getElementById("modeLabel");
+
+      let selectedTones = new Set();
+
+      function updateBudgetComfortLabel() {
+        const v = Number(budgetComfort.value || 3);
+        const labels = {
+          1: "Very strict",
+          2: "Fairly strict",
+          3: "Medium",
+          4: "Flexible",
+          5: "Very flexible",
+        };
+        budgetComfortLabel.textContent = "Comfort: " + (labels[v] || "medium");
+      }
+
+      budgetComfort.addEventListener("input", updateBudgetComfortLabel);
+      updateBudgetComfortLabel();
+
+      toneChips.addEventListener("click", (e) => {
+        const btn = e.target.closest(".chip");
+        if (!btn) return;
+        const tone = btn.dataset.tone;
+        if (selectedTones.has(tone)) {
+          selectedTones.delete(tone);
+          btn.classList.remove("active");
+        } else {
+          selectedTones.add(tone);
+          btn.classList.add("active");
+        }
+      });
+
+      function readTrimmed(id) {
+        const el = document.getElementById(id);
+        return (el.value || "").trim();
+      }
+
+      function getBudget() {
+        const min = Number(document.getElementById("budgetMin").value);
+        const max = Number(document.getElementById("budgetMax").value);
+        const comfort = Number(document.getElementById("budgetComfort").value || 3);
+        const normalized = {
+          hasMin: !Number.isNaN(min) && min >= 0,
+          hasMax: !Number.isNaN(max) && max > 0,
+          min: !Number.isNaN(min) && min >= 0 ? min : null,
+          max: !Number.isNaN(max) && max > 0 ? max : null,
+          comfort,
+        };
+        if (normalized.min !== null && normalized.max !== null && normalized.min > normalized.max) {
+          const corrected = normalized.min;
+          normalized.min = normalized.max;
+          normalized.max = corrected;
+        }
+        return normalized;
+      }
+
+      function withinBudget(price, budget) {
+        if (!budget.hasMin && !budget.hasMax) return true;
+        if (budget.hasMin && price < budget.min) {
+          return budget.comfort >= 4 ? price >= budget.min * 0.7 : false;
+        }
+        if (budget.hasMax && price > budget.max) {
+          return budget.comfort >= 4 ? price <= budget.max * 1.4 : false;
+        }
+        return true;
+      }
+
+      function priceBandForGift(basePrice, budget) {
+        const price = basePrice || 50;
+        let low = Math.round(price * 0.8);
+        let high = Math.round(price * 1.2);
+
+        if (budget.hasMin && low < budget.min) {
+          low = Math.round(budget.min * (budget.comfort >= 4 ? 0.9 : 1));
+        }
+        if (budget.hasMax && high > budget.max) {
+          high = Math.round(budget.max * (budget.comfort >= 4 ? 1.05 : 1));
+        }
+        if (low <= 0) low = 10;
+        if (high < low + 10) high = low + 10;
+        return { low, high };
+      }
+
+      function toneFromInputs(toneSet, customToneText) {
+        const tones = Array.from(toneSet);
+        const custom = (customToneText || "").toLowerCase();
+        const mapped = [];
+        if (tones.includes("playful") || custom.includes("fun")) mapped.push("playful");
+        if (tones.includes("romantic") || custom.includes("romantic") || custom.includes("intimate")) {
+          mapped.push("romantic");
+        }
+        if (tones.includes("elegant") || custom.includes("minimal") || custom.includes("elegant")) {
+          mapped.push("elegant");
+        }
+        if (tones.includes("cozy") || custom.includes("cozy") || custom.includes("comfort")) {
+          mapped.push("cozy");
+        }
+        if (tones.includes("adventurous") || custom.includes("adventure") || custom.includes("bold")) {
+          mapped.push("adventurous");
+        }
+        if (!mapped.length) mapped.push("balanced");
+        return mapped;
+      }
+
+      const giftCatalog = [
+        {
+          key: "experience_date_night",
+          type: "experience",
+          basePrice: 120,
+          relationshipHints: ["partner", "spouse", "girlfriend", "boyfriend"],
+          toneHints: ["romantic", "elegant", "cozy"],
+          tags: ["experience", "shared", "memory"],
+          nameVariants: [
+            "Curated date‑night experience",
+            "Story‑worthy evening together",
+          ],
+          descriptionTemplate: (ctx) =>
+            `A thoughtfully planned evening built entirely around ${ctx.nameRef}. Think a dinner spot that matches their tastes, an activity they secretly love or have wanted to try, and one small surprise detail that feels intensely “them” (like a playlist, custom menu note, or inside joke woven into the night).`,
+          fitReasons: [
+            "It turns their birthday into a story you both remember, instead of just an object.",
+            "It feels romantic without relying on clichés, and you can dial it up or down based on comfort.",
+            "You can tailor every detail to their actual tastes, not generic ideas.",
+          ],
+        },
+        {
+          key: "custom_story_book",
+          type: "sentimental",
+          basePrice: 65,
+          relationshipHints: ["partner", "friend", "sibling", "parent"],
+          toneHints: ["sentimental", "romantic", "cozy", "balanced"],
+          tags: ["sentimental", "keepsake", "creative"],
+          nameVariants: [
+            "Personalized storybook about them",
+            "“Why you’re brilliant” keepsake book",
+          ],
+          descriptionTemplate: (ctx) =>
+            `A beautifully laid‑out mini book that weaves together your favourite memories, private jokes, and the tiny details that make ${ctx.nameRef} who they are. Each page can mix short lines, photos, screenshots of messages, and captions that only the two of you would understand.`,
+          fitReasons: [
+            "It’s almost impossible to duplicate, because it’s built from your specific relationship.",
+            "Perfect for someone who values words, memories, and being truly seen.",
+            "The emotional impact is high while the cost can stay very reasonable.",
+          ],
+        },
+        {
+          key: "hobby_deep_dive_kit",
+          type: "physical",
+          basePrice: 90,
+          relationshipHints: ["friend", "partner", "sibling", "teammate"],
+          toneHints: ["playful", "practical", "balanced"],
+          tags: ["hobby", "bundle", "practical"],
+          nameVariants: [
+            "“Deep‑dive into your thing” kit",
+            "Curated upgrade bundle for their hobby",
+          ],
+          descriptionTemplate: (ctx) =>
+            `A small, tightly curated bundle that upgrades how ${ctx.nameRef} enjoys one specific interest you mentioned — instead of random merch. Think 2–4 items that solve real annoyances, add a fun twist, or make them feel more “pro level” at that thing.`,
+          fitReasons: [
+            "Shows you were listening to the details of their hobby, not just its label.",
+            "Easy to adjust up or down in budget by tweaking item quality and count.",
+            "Works especially well if they love practical gifts that still feel personal.",
+          ],
+        },
+        {
+          key: "cozy_home_evening",
+          type: "experience",
+          basePrice: 70,
+          relationshipHints: ["partner", "friend", "sibling"],
+          toneHints: ["cozy", "playful"],
+          tags: ["cozy", "experience", "home"],
+          nameVariants: [
+            "Ultra‑cozy birthday night in",
+            "At‑home celebration kit",
+          ],
+          descriptionTemplate: (ctx) =>
+            `An intentionally designed night in that feels like their personality turned into an evening: their favourite snacks, a hand‑picked movie or game lineup, a simple activity (like a tasting flight, mini craft, or themed playlist session), and a few tiny details that signal “this is for you and only you.”`,
+          fitReasons: [
+            "Perfect if they’re more homebody than nightclub.",
+            "You can lean into their aesthetic (cozy, cottage‑core, maximalist, etc.).",
+            "The experience can be as low‑key or elaborate as your energy allows.",
+          ],
+        },
+        {
+          key: "learning_or_skill_pass",
+          type: "experience",
+          basePrice: 80,
+          relationshipHints: ["friend", "partner", "teammate", "sibling"],
+          toneHints: ["adventurous", "balanced", "practical"],
+          tags: ["learning", "experience"],
+          nameVariants: [
+            "Skill‑building experience pass",
+            "Birthday “try that thing you mentioned” voucher",
+          ],
+          descriptionTemplate: (ctx) =>
+            `A gift that gives ${ctx.nameRef} permission (and a nudge) to finally try something they’ve talked about — from a pottery or cooking workshop to a climbing intro session, photography walk, or language mini‑course.`,
+          fitReasons: [
+            "Great for people who love learning or keep saying “one day I’ll try…”.",
+            "You can choose something that matches their comfort level (gentle intro vs bold adventure).",
+            "The memory of the experience often lasts longer than any object would.",
+          ],
+        },
+        {
+          key: "ritual_upgrade_set",
+          type: "physical",
+          basePrice: 75,
+          relationshipHints: ["partner", "friend", "sibling", "parent"],
+          toneHints: ["cozy", "elegant", "practical"],
+          tags: ["daily life", "ritual", "upgrade"],
+          nameVariants: [
+            "“Upgrade your favourite ritual” set",
+            "Everyday moment glow‑up kit",
+          ],
+          descriptionTemplate: (ctx) =>
+            `A bundle that quietly upgrades one small recurring part of ${ctx.nameRef}’s day — morning coffee, evening wind‑down, creative time, commute, or workout. Think higher‑quality versions of things they already use, plus one or two unexpected little luxuries.`,
+          fitReasons: [
+            "Feels indulgent and thoughtful but still highly practical.",
+            "Works well for people who value comfort and quality over flash.",
+            "The gift reminds them of you every time they use it without shouting for attention.",
+          ],
+        },
+      ];
+
+      function inferContextKeywords(text) {
+        const lower = (text || "").toLowerCase();
+        const res = new Set();
+        const pairs = [
+          ["gaming", ["games", "gamer", "steam", "switch", "playstation", "xbox"]],
+          ["cooking", ["cook", "kitchen", "chef", "baking"]],
+          ["travel", ["travel", "trip", "flight", "holiday"]],
+          ["music", ["music", "playlist", "concert", "gig"]],
+          ["reading", ["book", "novel", "reading"]],
+          ["art", ["draw", "paint", "illustration", "art"]],
+          ["fitness", ["gym", "workout", "run", "yoga", "climb"]],
+          ["cozy", ["cozy", "cottage", "tea", "blanket"]],
+          ["tech", ["tech", "gadget", "device"]],
+        ];
+        for (const [label, keywords] of pairs) {
+          if (keywords.some((k) => lower.includes(k))) res.add(label);
+        }
+        return res;
+      }
+
+      function scoreGiftOption(option, ctx) {
+        let score = 0;
+        if (withinBudget(option.basePrice, ctx.budget)) {
+          score += 3;
+        } else {
+          score -= 2;
+        }
+        const relLower = ctx.relationship.toLowerCase();
+        if (!relLower) {
+          score += 1;
+        } else {
+          for (const r of option.relationshipHints || []) {
+            if (relLower.includes(r)) score += 4;
+          }
+        }
+        const toneMatch = ctx.tones.some((t) => option.toneHints.includes(t));
+        if (toneMatch) score += 3;
+        const areaMatches = option.tags.filter((t) => ctx.interestLabels.has(t)).length;
+        score += areaMatches * 2;
+        if (ctx.emphasis === "experiences" && option.type === "experience") score += 3;
+        if (ctx.emphasis === "physical" && option.type === "physical") score += 3;
+        if (ctx.emphasis === "sentimental" && option.type === "sentimental") score += 4;
+        if (ctx.emphasis === "practical" && option.tags.includes("practical")) score += 3;
+        const avoidLower = ctx.avoid.toLowerCase();
+        if (avoidLower && option.tags.some((t) => avoidLower.includes(t))) {
+          score -= 5;
+        }
+        return score;
+      }
+
+      function buildSearchLinks(name, context) {
+        const queryBase = encodeURIComponent(
+          `${name} birthday gift ${context.interestsSummary || ""}`.slice(0, 160)
+        );
+        return [
+          {
+            label: "Search broadly",
+            vendor: "Web",
+            href: `https://www.google.com/search?q=${queryBase}`,
+          },
+          {
+            label: "Try marketplace",
+            vendor: "General marketplace",
+            href: `https://www.google.com/search?tbm=shop&q=${queryBase}`,
+          },
+        ];
+      }
+
+      function generateSuggestions(ctx) {
+        const scored = giftCatalog
+          .map((g) => ({
+            option: g,
+            score: scoreGiftOption(g, ctx),
+          }))
+          .sort((a, b) => b.score - a.score);
+
+        const count = Math.max(1, Math.min(6, ctx.ideaCount || 3));
+        return scored.slice(0, count).map(({ option }, idx) => {
+          const nameBase =
+            option.nameVariants[Math.floor(Math.random() * option.nameVariants.length)];
+          const priceBand = priceBandForGift(option.basePrice, ctx.budget);
+          const links = buildSearchLinks(nameBase, ctx);
+
+          const why = option.fitReasons.join(" ");
+
+          const personalizeLines = [];
+          if (ctx.interestsSummary) {
+            personalizeLines.push(
+              `Lean hard into their actual interests you listed (“${ctx.interestsSummary}”) when choosing the specific version of this gift.`
+            );
+          }
+          if (ctx.pastGiftsSummary) {
+            personalizeLines.push(
+              `Reference past gifts you mentioned (“${ctx.pastGiftsSummary}”) in a line of the card or a small hidden note, so this feels like a continuation of your story rather than a random idea.`
+            );
+          }
+          if (ctx.personalitySummary) {
+            personalizeLines.push(
+              `When you finalize details, ask: “Does this feel like how they move through the world? (${ctx.personalitySummary})” If yes, you’re on the right track.`
+            );
+          }
+          if (!personalizeLines.length) {
+            personalizeLines.push(
+              "Anchor the details in specific stories, phrases, or inside jokes the two of you actually share, rather than generic quotes."
+            );
+          }
+
+          const personalization = personalizeLines.join(" ");
+
+          const descCtx = {
+            nameRef: ctx.recipientName || "them",
+          };
+
+          return {
+            idx: idx + 1,
+            shortName: nameBase,
+            description: option.descriptionTemplate(descCtx),
+            whyItFits: why,
+            priceRange: priceBand,
+            links,
+            personalize: personalization,
+            type: option.type,
+            tags: option.tags,
+          };
+        });
+      }
+
+      function renderSuggestions(suggestions, ctx) {
+        emptyState.style.display = "none";
+        resultsContainer.innerHTML = "";
+
+        for (const s of suggestions) {
+          const card = document.createElement("article");
+          card.className = "suggestion-card";
+
+          const tagLabel =
+            s.type === "experience"
+              ? "Experience‑leaning"
+              : s.type === "sentimental"
+              ? "Sentimental / keepsake"
+              : "Tangible‑leaning";
+
+          const cardHtml = `
+            <div class="suggestion-content">
+              <div class="suggestion-header">
+                <div class="suggestion-title">
+                  <span class="suggestion-index">Idea ${s.idx}</span>
+                  <span>${s.shortName}</span>
+                </div>
+                <div class="suggestion-tags">
+                  <span class="tag">${tagLabel}</span>
+                </div>
+              </div>
+
+              <div class="suggestion-section">
+                <div class="field-label-inline">What it is</div>
+                <p>${s.description}</p>
+              </div>
+
+              <div class="suggestion-section">
+                <div class="field-label-inline">Why it fits</div>
+                <p class="muted">${s.whyItFits}</p>
+              </div>
+
+              <div class="suggestion-section">
+                <div class="field-label-inline">Price range</div>
+                <p class="price-range">
+                  Approx. $${s.priceRange.low}–$${s.priceRange.high} (adjustable)
+                </p>
+              </div>
+
+              <div class="suggestion-section">
+                <div class="field-label-inline">Where to start looking</div>
+                <div class="link-list">
+                  ${s.links
+                    .map(
+                      (l) => `
+                    <a href="${l.href}" target="_blank" rel="noopener noreferrer" class="link-pill">
+                      <span>${l.vendor}</span>
+                      <span>Search</span>
+                    </a>`
+                    )
+                    .join("")}
+                </div>
+              </div>
+
+              <div class="suggestion-section">
+                <div class="field-label-inline">How to personalize it</div>
+                <p class="muted">${s.personalize}</p>
+              </div>
+            </div>
+          `;
+
+          card.innerHTML = cardHtml;
+          resultsContainer.appendChild(card);
+        }
+
+        modeLabel.textContent = "Suggestions ready";
+      }
+
+      form.addEventListener("submit", (e) => {
+        e.preventDefault();
+        statusText.textContent = "";
+        statusText.classList.remove("error");
+
+        const recipientName = readTrimmed("recipientName");
+        const relationship = readTrimmed("relationship");
+        const ageStage = readTrimmed("ageStage");
+        const location = readTrimmed("location");
+        const interests = readTrimmed("interests");
+        const avoid = readTrimmed("avoid");
+        const pastGifts = readTrimmed("pastGifts");
+        const personality = readTrimmed("personality");
+        const toneCustom = readTrimmed("toneCustom");
+        const references = readTrimmed("references");
+        const ideaCount = Number(document.getElementById("ideaCount").value || 3);
+        const emphasis = document.getElementById("emphasis").value;
+
+        if (!recipientName && !interests && !references) {
+          statusText.textContent =
+            "Give me at least a name, some interests, or a bit of pasted context so I can tailor suggestions.";
+          statusText.classList.add("error");
+          return;
+        }
+
+        const budget = getBudget();
+        const tones = toneFromInputs(selectedTones, toneCustom);
+        const allFreeText = [interests, pastGifts, personality, references].join(" ");
+        const interestLabels = inferContextKeywords(allFreeText);
+
+        const ctx = {
+          recipientName,
+          relationship: relationship || "",
+          ageStage,
+          location,
+          interests,
+          avoid,
+          pastGifts,
+          personality,
+          references,
+          ideaCount,
+          emphasis,
+          tones,
+          budget,
+          interestLabels,
+          interestsSummary: interests,
+          pastGiftsSummary: pastGifts,
+          personalitySummary: personality,
+        };
+
+        generateBtn.disabled = true;
+        modeLabel.textContent = "Thinking from your context…";
+        statusText.textContent = "Drafting gift ideas from the details you shared.";
+
+        try {
+          const suggestions = generateSuggestions(ctx);
+          renderSuggestions(suggestions, ctx);
+          statusText.textContent =
+            "You can tweak the context or sliders and regenerate to explore different angles.";
+        } catch (err) {
+          console.error(err);
+          statusText.textContent =
+            "Something went wrong generating suggestions. You can adjust the inputs and try again.";
+          statusText.classList.add("error");
+        } finally {
+          generateBtn.disabled = false;
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
+
