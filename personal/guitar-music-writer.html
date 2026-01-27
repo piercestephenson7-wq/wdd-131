@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Guitar Music Writer</title>
+    <link rel="stylesheet" href="guitar-music-writer.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- AALang Tool Specification -->
+    <script type="application/ld+json" id="tool-spec">
+    </script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Guitar Music Writer</h1>
+            <p class="subtitle">Generate guitar music with lyrics, chords, and tabs</p>
+        </header>
+
+        <main>
+            <!-- Input Form Section -->
+            <section id="input-section" class="input-section">
+                <h2>Song Inputs</h2>
+                <form id="music-form">
+                    <div class="form-group">
+                        <label for="tone">Tone:</label>
+                        <select id="tone" name="tone" required>
+                            <option value="">Select a tone...</option>
+                            <option value="happy">Happy</option>
+                            <option value="sad">Sad</option>
+                            <option value="energetic">Energetic</option>
+                            <option value="calm">Calm</option>
+                            <option value="melancholic">Melancholic</option>
+                            <option value="upbeat">Upbeat</option>
+                            <option value="introspective">Introspective</option>
+                            <option value="romantic">Romantic</option>
+                            <option value="aggressive">Aggressive</option>
+                            <option value="peaceful">Peaceful</option>
+                        </select>
+                        <input type="text" id="tone-custom" name="tone-custom" placeholder="Or enter custom tone (optional)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="theme">Theme:</label>
+                        <input type="text" id="theme" name="theme" placeholder="e.g., love, adventure, loss, hope" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="story">Story:</label>
+                        <textarea id="story" name="story" rows="5" placeholder="Tell a story to inspire the lyrics..." required></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="complexity">Complexity Level: <span id="complexity-value">5</span></label>
+                        <input type="range" id="complexity" name="complexity" min="1" max="10" value="5" required>
+                        <div class="complexity-labels">
+                            <span>1 (Simple)</span>
+                            <span>10 (Advanced)</span>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="generate-btn" class="generate-btn">Generate Music</button>
+                </form>
+            </section>
+
+            <!-- Loading Section -->
+            <section id="loading-section" class="loading-section hidden">
+                <div class="spinner"></div>
+                <p>Generating your music...</p>
+            </section>
+
+            <!-- Results Section -->
+            <section id="results-section" class="results-section hidden">
+                <div class="results-header">
+                    <h2>Generated Music</h2>
+                    <div class="results-actions">
+                        <button id="export-pdf-btn" class="export-btn">Export PDF</button>
+                        <button id="new-song-btn" class="new-song-btn">New Song</button>
+                    </div>
+                </div>
+                <div id="results-content"></div>
+            </section>
+
+            <!-- History Section -->
+            <section id="history-section" class="history-section">
+                <div class="history-header">
+                    <h2>Song History</h2>
+                    <button id="clear-history-btn" class="clear-history-btn">Clear History</button>
+                </div>
+                <div id="history-list"></div>
+            </section>
+        </main>
+    </div>
+
+    <script src="guitar-music-writer.js"></script>
+</body>
+</html>
