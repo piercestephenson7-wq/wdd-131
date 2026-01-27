@@ -1,5 +1,5 @@
 // Guitar Music Writer - Web Application
-// This application embeds and uses the AALang Music Generation Tool
+// This application uses Claude API to generate guitar music
 
 class GuitarMusicWriter {
     constructor() {
@@ -51,78 +51,20 @@ class GuitarMusicWriter {
     }
 
     loadToolSpec() {
-        // Try to load from script tag first (embedded in HTML), then fallback to fetch
+        // Load from embedded script tag
         const scriptTag = document.getElementById('tool-spec');
         if (scriptTag && scriptTag.textContent.trim()) {
-            // JSON-LD is embedded in HTML script tag
-            this.toolSpec = JSON.parse(scriptTag.textContent);
+            try {
+                this.toolSpec = JSON.parse(scriptTag.textContent);
+                console.log('Tool specification loaded successfully');
+            } catch (error) {
+                console.error('Error parsing tool specification:', error);
+                this.showError('Failed to load music generation tool specification.');
+            }
         } else {
-            // Fallback: try to fetch from file (requires local server for CORS)
-            this.loadToolSpecFromFile();
+            console.error('Tool specification not found in HTML');
+            this.showError('Tool specification not embedded in HTML.');
         }
-    }
-
-    async loadToolSpecFromFile() {
-        try {
-            const response = await fetch('guitar-music-writer.jsonld');
-            this.toolSpec = await response.json();
-            // Also update the script tag for future use
-            const scriptTag = document.getElementById('tool-spec');
-            if (scriptTag) {
-                scriptTag.textContent = JSON.stringify(this.toolSpec, null, 2);
-            }
-        } catch (error) {
-            console.error('Error loading tool specification:', error);
-            console.warn('Note: To avoid CORS issues, either:');
-            console.warn('1. Use a local web server (e.g., python -m http.server)');
-            console.warn('2. Embed the JSON-LD in the HTML script tag with id="tool-spec"');
-            this.showError('Failed to load music generation tool. Please ensure guitar-music-writer.jsonld is accessible or embedded in the HTML.');
-        }
-    }
-
-                  "severity": "critical",
-                  "action": "Execute commands or proceed with actions while waiting for user response",
-                  "details": "DO NOT execute commands (date, file operations, etc.) while waiting for user response. DO NOT proceed with actions until you receive explicit user answer to questions.",
-                  "appliesTo": ["user question handling", "all actions while waiting"]
-                }
-              ]
-            },
-            {
-              "@id": "ex:MusicGenerationAgent",
-              "@type": "LLMAgent",
-              "pattern": "1-mode-7-actor",
-              "purpose": "Generate guitar music (lyrics with chords and guitar tabs) based on user inputs: tone, theme, story, and complexity level",
-              "modes": ["ex:GenerationMode"],
-              "actors": [
-                "ex:InputProcessingActor",
-                "ex:ChordGenerationActor",
-                "ex:ChordSelectionActor",
-                "ex:LyricsGenerationActor",
-                "ex:TabGenerationActor",
-                "ex:OutputFormattingActor",
-                "ex:StateActor"
-              ],
-              "constraints": [
-                "All music generation must use LLM reasoning, not system commands or code execution",
-                "Complexity meter (1-10) affects chord complexity and tab difficulty, not lyrics complexity",
-                "Generate multiple chord progressions and select the best one",
-                "Chord progressions generated first, then lyrics matched to chords",
-                "Use semantic interpretation for complexity (not explicit rules)",
-                "State resets on each tool execution - no persistence across sessions"
-              ],
-              "requirements": [
-                {
-                  "severity": "critical",
-                  "action": "Ensure variety across sessions",
-                  "details": "Use contextual cues (tone, theme, story, complexity) as seeds for variability. Ensure different inputs produce different outputs. Avoid deterministic/repetitive behavior by incorporating input context into generation decisions.",
-                  "appliesTo": ["all generation actors"]
-                }
-              ]
-            }
-            // Note: Full tool specification is embedded. The complete JSON-LD includes all actors, personas, and specifications.
-            // For brevity, showing key parts. The full spec is available in guitar-music-writer.jsonld
-          ]
-        };
     }
 
     async generateMusic() {
@@ -149,9 +91,7 @@ class GuitarMusicWriter {
         document.getElementById('generate-btn').disabled = true;
 
         try {
-            // Execute AALang tool via LLM API
-            // Note: This requires an LLM API integration
-            // For demonstration, we'll use a placeholder that simulates the tool execution
+            // Execute tool via Claude API
             const result = await this.executeTool({
                 tone: finalTone,
                 theme: theme,
@@ -165,7 +105,8 @@ class GuitarMusicWriter {
             this.renderHistory();
         } catch (error) {
             console.error('Error generating music:', error);
-            this.showError('Generation failed. Please reload the page and try again.');
+            this.showError('Generation failed: ' + (error.message || 'Unknown error. Please try again.'));
+            document.getElementById('input-section').classList.remove('hidden');
         } finally {
             document.getElementById('loading-section').classList.add('hidden');
             document.getElementById('generate-btn').disabled = false;
@@ -173,59 +114,105 @@ class GuitarMusicWriter {
     }
 
     async executeTool(inputs) {
-        // This function should integrate with an LLM API to execute the AALang tool
-        // For now, we'll provide a placeholder that demonstrates the expected flow
-        
-        // In a real implementation, you would:
-        // 1. Load the AALang tool JSON-LD specification (already loaded in this.toolSpec)
-        // 2. Send the tool specification and inputs to an LLM API
-        // 3. The LLM interprets the JSON-LD and executes the tool as an AALang agent
-        // 4. Return the generated JSON result
+        // Build the prompt that includes the tool spec and user inputs
+        const prompt = `You are executing the AALang Music Generation Tool. Generate guitar music based on these inputs:
 
-        // Placeholder: Simulate API call delay
-        await new Promise(resolve => setTimeout(resolve, 2000));
+Tone: ${inputs.tone}
+Theme: ${inputs.theme}
+Story: ${inputs.story}
+Complexity: ${inputs.complexity}/10
 
-        // Placeholder: Return example structure
-        // In production, this would come from the LLM API executing the AALang tool
-        return {
-            sections: [
-                {
-                    type: 'verse',
-                    lyrics: `[Verse lyrics based on: ${inputs.story}]`,
-                    chords: ['Am', 'F', 'C', 'G'],
-                    tabs: 'e|---0---1---0---3---\nB|---1---1---1---0---\nG|---2---2---0---0---\nD|---2---3---2---0---\nA|---0---3---3---2---\nE|-------1---1---3---'
+Generate a complete song with verse, chorus, and bridge sections. Each section must include:
+- Lyrics that match the tone, theme, and story
+- A chord progression appropriate for the complexity level
+- Guitar tabs in ASCII format
+
+Return ONLY valid JSON in this exact format:
+{
+  "sections": [
+    {
+      "type": "verse",
+      "lyrics": "...",
+      "chords": ["Am", "F", "C", "G"],
+      "tabs": "e|---0---1---0---3---\\nB|---1---1---1---0---\\nG|---2---2---0---0---\\nD|---2---3---2---0---\\nA|---0---3---3---2---\\nE|-------1-------3---"
+    },
+    {
+      "type": "chorus",
+      "lyrics": "...",
+      "chords": ["C", "G", "Am", "F"],
+      "tabs": "..."
+    },
+    {
+      "type": "bridge",
+      "lyrics": "...",
+      "chords": ["Dm", "G", "C"],
+      "tabs": "..."
+    }
+  ],
+  "metadata": {
+    "complexity": ${inputs.complexity},
+    "tone": "${inputs.tone}",
+    "theme": "${inputs.theme}"
+  }
+}
+
+Remember: Use LLM reasoning for all generation. The complexity level affects chord sophistication and tab difficulty. Make the lyrics meaningful and connected to the story.`;
+
+        try {
+            // Call Claude API
+            const response = await fetch("https://api.anthropic.com/v1/messages", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
                 },
-                {
-                    type: 'chorus',
-                    lyrics: `[Chorus lyrics based on theme: ${inputs.theme}]`,
-                    chords: ['C', 'G', 'Am', 'F'],
-                    tabs: 'e|---0---3---0---1---\nB|---1---0---1---1---\nG|---0---0---2---2---\nD|---2---0---2---3---\nA|---3---2---0---3---\nE|-------3---0---1---'
-                }
-            ],
-            metadata: {
-                complexity: inputs.complexity,
-                tone: inputs.tone,
-                theme: inputs.theme
-            }
-        };
+                body: JSON.stringify({
+                    model: "claude-sonnet-4-20250514",
+                    max_tokens: 4000,
+                    messages: [
+                        {
+                            role: "user",
+                            content: prompt
+                        }
+                    ],
+                })
+            });
 
-        // TODO: Replace with actual LLM API integration
-        // Example integration pattern:
-        /*
-        const response = await fetch('YOUR_LLM_API_ENDPOINT', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': 'Bearer YOUR_API_KEY'
-            },
-            body: JSON.stringify({
-                tool_spec: this.toolSpec,
-                inputs: inputs,
-                instruction: "Execute this AALang tool as an agent. Generate music based on the provided inputs."
-            })
-        });
-        return await response.json();
-        */
+            if (!response.ok) {
+                throw new Error(`API request failed: ${response.status} ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            // Extract text content from response
+            let textContent = '';
+            if (data.content && Array.isArray(data.content)) {
+                textContent = data.content
+                    .filter(item => item.type === 'text')
+                    .map(item => item.text)
+                    .join('\n');
+            }
+
+            if (!textContent) {
+                throw new Error('No text content in API response');
+            }
+
+            // Parse JSON from response (strip markdown if present)
+            let jsonStr = textContent.trim();
+            jsonStr = jsonStr.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+            
+            const result = JSON.parse(jsonStr);
+            
+            // Validate result structure
+            if (!result.sections || !Array.isArray(result.sections) || !result.metadata) {
+                throw new Error('Invalid response structure from API');
+            }
+
+            return result;
+
+        } catch (error) {
+            console.error('Tool execution error:', error);
+            throw error;
+        }
     }
 
     displayResults(result) {
@@ -239,19 +226,19 @@ class GuitarMusicWriter {
 
             const title = document.createElement('h3');
             title.className = 'section-title';
-            title.textContent = section.type;
+            title.textContent = section.type.charAt(0).toUpperCase() + section.type.slice(1);
 
             const lyrics = document.createElement('div');
             lyrics.className = 'lyrics';
             lyrics.textContent = section.lyrics;
 
-            const chords = document.createElement('div');
-            chords.className = 'chords';
+            const chordsDiv = document.createElement('div');
+            chordsDiv.className = 'chords';
             section.chords.forEach(chord => {
                 const chordSpan = document.createElement('span');
                 chordSpan.className = 'chord';
                 chordSpan.textContent = chord;
-                chords.appendChild(chordSpan);
+                chordsDiv.appendChild(chordSpan);
             });
 
             const tabs = document.createElement('pre');
@@ -260,7 +247,7 @@ class GuitarMusicWriter {
 
             sectionBlock.appendChild(title);
             sectionBlock.appendChild(lyrics);
-            sectionBlock.appendChild(chords);
+            sectionBlock.appendChild(chordsDiv);
             sectionBlock.appendChild(tabs);
             resultsContent.appendChild(sectionBlock);
         });
@@ -272,6 +259,7 @@ class GuitarMusicWriter {
             <div class="metadata-item"><strong>Complexity:</strong> ${result.metadata.complexity}/10</div>
             <div class="metadata-item"><strong>Tone:</strong> ${result.metadata.tone}</div>
             <div class="metadata-item"><strong>Theme:</strong> ${result.metadata.theme}</div>
+            <div class="metadata-item" style="margin-top: 10px; font-style: italic;">Created using AALang and Gab</div>
         `;
         resultsContent.appendChild(metadata);
 
@@ -332,7 +320,7 @@ class GuitarMusicWriter {
 
             // Tabs
             doc.setFontSize(8);
-            doc.setFont(undefined, 'courier');
+            doc.setFont('courier');
             const tabLines = section.tabs.split('\n');
             tabLines.forEach(line => {
                 if (yPos > 280) {
