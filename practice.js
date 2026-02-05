@@ -57,3 +57,16 @@ function doorStatus(state) {
 state = prompt("Enter door state (0 for closed, 1 for open):");
 doorStatus(state);
 alert("The door is " + doorStatus(parseInt(state)));
+
+
+
+
+const allRatingElms = document.querySelectorAll('article.movie p span');
+
+allRatingElms.length;
+
+allRatingElms.forEach((elem) => {
+console.log(elem);
+const rating = elem.innerText.length
+elem.setAttribute('aria-label', `${rating} out of 5 stars`);
+});
