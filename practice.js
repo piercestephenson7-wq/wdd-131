@@ -70,3 +70,18 @@ console.log(elem);
 const rating = elem.innerText.length
 elem.setAttribute('aria-label', `${rating} out of 5 stars`);
 });
+
+
+
+
+
+
+const numbers = [1, 2, 3, 4, 5];
+
+const doubledNumbers = numbers.map(num => num * 2);
+
+console.log(doubledNumbers); // Output: [2, 4, 6, 8, 10] 
+
+
+const sum = numbers.reduce((total, num) => total + num);
+console.log(sum); // Output: 15
