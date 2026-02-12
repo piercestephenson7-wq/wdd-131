@@ -85,3 +85,23 @@ console.log(doubledNumbers); // Output: [2, 4, 6, 8, 10]
 
 const sum = numbers.reduce((total, num) => total + num);
 console.log(sum); // Output: 15
+
+
+// practice for week6 ponder
+
+const moviesList = document.getElementById('movie-list');
+
+articles.forEach((movie) => {
+    const article = document.createElement('article');
+    article.classList.add('movie');
+
+    article.innerHTML = `
+        <h2>${movie.title}</h2>
+        <img src="${movie.poster}" alt="${movie.title} poster">
+        <p>Release Date: ${movie.year}</p>
+        <p>Recommended Age: ${movie.age}</p>
+        <p>Genre: ${movie.genre}</p>
+        <p>Rating: ${movie.rating} stars</p>
+    `;
+    moviesList.appendChild(article);
+});
