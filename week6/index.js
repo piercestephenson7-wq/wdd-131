@@ -27,3 +27,15 @@ function checkAdult(age) {
 const ages = [18, 22, 19];
 const result = ages.filter(checkAdult);
 console.log(result);
+
+const colors = ["red", "green", "blue", "yellow", "purple"];
+
+const ul = document.createElement("ul");
+
+colors.forEach(color => {
+    const li = document.createElement("li");
+    li.textContent = color;
+    ul.appendChild(li);
+});
+
+document.body.appendChild(ul);
