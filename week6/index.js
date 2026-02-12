@@ -28,6 +28,8 @@ const ages = [18, 22, 19];
 const result = ages.filter(checkAdult);
 console.log(result);
 
+
+
 const colors = ["red", "green", "blue", "yellow", "purple"];
 
 const ul = document.createElement("ul");
