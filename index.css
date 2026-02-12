@@ -1,13 +1,56 @@
 a {
     text-decoration: none;
     font-size: 16px;
-    color: purple;
+    color: white;
+    display: block;
+    padding: 6px 10px;
+    margin: 4px 0;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    position: relative;
 }
 a:hover {
     text-decoration: underline;
     color: pink;
+    background: rgba(143, 211, 244, 0.15);
+    transform: translateX(4px);
+}
+a:hover::before {
+    height: 70%;
 }
 body {
     display: grid;
     grid-template-columns: 1fr 1fr;
+}
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+    color: #eaeaea;
+    min-height: 100vh;
+    display: flex;
+}
+h2 {
+    margin: 20px 0 10px;
+    font-size: 1.1rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #8fd3f4;
+}
+hr {
+    border: none;
+    height: 1px;
+    margin: 16px 0;
+    background: linear-gradient(
+        to right,
+        transparent,
+        rgba(255, 255, 255, 0.25),
+        transparent
+    );
+}
+
+@media (max-width: 700px) {
+    body {
+        flex-direction: column;
+    }
 }
