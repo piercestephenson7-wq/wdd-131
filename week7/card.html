@@ -8,24 +8,36 @@
     <script src="card.js" defer></script>
 </head>
 <body>
+    <div id="card">
         <div id="front">
+            <h4>TOTAL: $199</h4>
+            <h4 id="cardIcon">💳</h4>
             <form id="cardFront">
                 <label for="number">CARD NUMBER</label><br>
                 <input type="text" id="number" name="number" placeholder="1234 5678 9012 3456" required><br>
-
-                <label for="name">CARD HOLDER</label><br>
-                <input type="text" id="name" name="name" placeholder="Jane Doe" required>
-
-                <label for="expirationDate">EXPIRATION</label>
-                <input type='text' id='month' name="expMonth" placeholder="MM" aria-labelledby="expirationDate">
-                <input type='text' id='year' name="expYear" placeholder="YY" aria-labelledby="expirationDate">
+                <div id="cardDetails">   
+                    <div>
+                        <label for="name">CARD HOLDER</label><br>
+                        <input type="text" id="name" name="name" placeholder="Jane Doe" required>
+                    </div>
+                    <div>
+                        <label for="expirationDate">EXPIRATION</label><br>
+                        <input type='text' id='month' name="expMonth" placeholder="MM" style="width: 30px;" aria-labelledby="expirationMonth">
+                        <input type='text' id='year' name="expYear" placeholder="YY" style="width: 30px;" aria-labelledby="expirationYear">
+                    </div>
+                </div>
             </form>
         </div>
         <div id="back">
+            <hr id="magneticStrip">
             <form id="cardBack">
                 <label for="cvv">CVC/CVV</label><br>
-                <input type="text" id="cvv" name="cvv" required>
+                <input type="text" id="cvv" name="cvv" placeholder="XXX" required>
             </form>
         </div>
+    </div>
+    <button>
+        Submit
+    </button>
 </body>
 </html>

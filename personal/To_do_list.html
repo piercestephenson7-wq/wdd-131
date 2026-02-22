@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Pro-Quest | Verified Build</title>
+    <style>
+        :root {
+            --bg: #09090b; --card: #18181b; --accent: #8b5cf6;
+            --text-main: #fafafa; --text-dim: #a1a1aa;
+            --border: rgba(255,255,255,0.1);
+        }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background: var(--bg); color: var(--text-main);
+            margin: 0; display: flex; height: 100vh; overflow: hidden;
+        }
+
+        /* Mobile Sidebar Toggle */
+        #menu-toggle {
+            display: none; position: fixed; top: 15px; left: 15px; z-index: 100;
+            background: var(--accent); border: none; color: white; padding: 8px; border-radius: 8px;
+        }
+
+        #sidebar {
+            width: 260px; background: #121214; border-right: 1px solid var(--border);
+            display: flex; flex-direction: column; padding: 20px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        #main-content { flex: 1; overflow-y: auto; padding: 40px; }
+
+        @media (max-width: 768px) {
+            #menu-toggle { display: block; }
+            #sidebar { position: fixed; z-index: 90; height: 100%; transform: translateX(-100%); }
+            body.sidebar-open #sidebar { transform: translateX(0); }
+            #main-content { padding: 80px 20px 40px 20px; }
+        }
+
+        .rank-badge {
+            background: linear-gradient(45deg, var(--accent), #d946ef);
+            padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 800; text-align: center;
+        }
+
+        .progress-container { margin: 25px 0; }
+        .bar { height: 8px; background: #27272a; border-radius: 4px; margin-top: 10px; overflow: hidden; }
+        #xp-progress { height: 100%; background: var(--accent); width: 0%; transition: width 0.6s ease; }
+
+        .input-wrapper {
+            background: var(--card); border: 1px solid var(--border);
+            border-radius: 14px; padding: 8px 16px; margin-bottom: 35px;
+            display: flex; gap: 12px; align-items: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        #task-input {
+            background: transparent; border: none; color: white; flex: 1;
+            padding: 12px 0; font-size: 16px; outline: none;
+        }
+
+        .task-card {
+            background: var(--card); border: 1px solid var(--border);
+            padding: 18px; border-radius: 16px; margin-bottom: 14px;
+            cursor: pointer; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; align-items: center; gap: 16px;
+            animation: slideUp 0.4s ease-out;
+        }
+
+        @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+
+        .task-card:hover { border-color: var(--accent); transform: scale(1.01); }
+        .task-card.completed { opacity: 0.5; border-color: transparent; }
+
+        .check-circle { 
+            width: 24px; height: 24px; border: 2px solid #3f3f46; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 14px;
+            flex-shrink: 0; transition: 0.2s;
+        }
+
+        .completed .check-circle { background: var(--accent); border-color: var(--accent); color: white; }
+        .completed .task-text { text-decoration: line-through; color: var(--text-dim); }
+
+        .tag { font-size: 11px; background: rgba(139, 92, 246, 0.15); color: var(--accent); padding: 4px 10px; border-radius: 6px; font-weight: 600; }
+
+        .confetti-p { position: fixed; width: 8px; height: 8px; pointer-events: none; z-index: 1000; border-radius: 2px; }
+    </style>
+</head>
+<body>
+
+<button id="menu-toggle" onclick="document.body.classList.toggle('sidebar-open')">☰</button>
+
+<aside id="sidebar">
+    <div class="rank-badge">RANK: <span id="rank-name">NOVICE</span></div>
+    
+    <div class="progress-container">
+        <div style="display:flex; justify-content:space-between; font-size:12px;">
+            <span>Level <span id="lvl">1</span></span>
+            <span id="xp-text">0/100 XP</span>
+        </div>
+        <div class="bar"><div id="xp-progress"></div></div>
+    </div>
+
+    <nav style="display:flex; flex-direction:column; gap:8px;">
+        <button onclick="app.setFilter('all')" style="background:none; border:none; color:white; text-align:left; padding:10px; cursor:pointer; font-weight:600;">🏠 All Operations</button>
+        <button onclick="app.setFilter('focus')" style="background:none; border:none; color:var(--text-dim); text-align:left; padding:10px; cursor:pointer;">⚡ Focus Mode</button>
+        <button onclick="app.clearData()" style="background:none; border:none; color: #ef4444; text-align:left; padding:10px; cursor:pointer; margin-top:20px; font-size:12px;">🗑 Reset Progress</button>
+    </nav>
+</aside>
+
+<main id="main-content">
+    <div class="input-wrapper">
+        <input type="text" id="task-input" placeholder="Mission name... (try 'Build car by tomorrow')">
+        <button onclick="app.addTask()" style="background:var(--accent); border:none; color:white; padding:10px 20px; border-radius:10px; cursor:pointer; font-weight:bold;">DEPLOY</button>
+    </div>
+
+    <div id="active-tasks"></div>
+    <div id="completed-tasks" style="margin-top:40px; border-top:1px solid var(--border); padding-top:20px;"></div>
+</main>
+
+<script>
+    const app = {
+        data: JSON.parse(localStorage.getItem('pro_quest_v2')) || { tasks: [], xp: 0 },
+        filter: 'all',
+
+        init() {
+            this.render();
+            this.updateUI();
+            document.getElementById('task-input').onkeypress = (e) => e.key === 'Enter' && this.addTask();
+        },
+
+        parseNLP(text) {
+            const now = new Date();
+            let due = 'ASAP';
+            if (/by tomorrow/i.test(text)) due = 'Tomorrow';
+            if (/by friday/i.test(text)) due = 'Friday';
+            const cleanText = text.replace(/by tomorrow|by friday/gi, '').trim();
+            return { cleanText, due };
+        },
+
+        addTask() {
+            const input = document.getElementById('task-input');
+            const val = input.value.trim();
+            if(!val) return;
+
+            const { cleanText, due } = this.parseNLP(val);
+            this.data.tasks.unshift({ id: Date.now(), text: cleanText, due, completed: false });
+            input.value = '';
+            this.save();
+            this.render();
+        },
+
+        toggle(id) {
+            const task = this.data.tasks.find(t => t.id === id);
+            task.completed = !task.completed;
+            this.data.xp = Math.max(0, this.data.xp + (task.completed ? 25 : -25));
+            if(task.completed) this.burst();
+            this.save();
+            this.render();
+            this.updateUI();
+        },
+
+        setFilter(f) {
+            this.filter = f;
+            this.render();
+        },
+
+        clearData() {
+            if(confirm("Wipe all missions and XP?")) {
+                this.data = { tasks: [], xp: 0 };
+                this.save();
+                this.render();
+                this.updateUI();
+            }
+        },
+
+        save() { localStorage.setItem('pro_quest_v2', JSON.stringify(this.data)); },
+
+        updateUI() {
+            const level = Math.floor(this.data.xp / 100) + 1;
+            const currentXP = this.data.xp % 100;
+            const ranks = ["NOVICE", "OPERATIVE", "ELITE", "COMMANDER", "LEGEND"];
+            document.getElementById('lvl').innerText = level;
+            document.getElementById('rank-name').innerText = ranks[Math.min(level-1, 4)];
+            document.getElementById('xp-text').innerText = `${currentXP}/100 XP`;
+            document.getElementById('xp-progress').style.width = currentXP + '%';
+        },
+
+        burst() {
+            for(let i=0; i<30; i++) {
+                const p = document.createElement('div');
+                p.className = 'confetti-p';
+                p.style.left = '50vw'; p.style.top = '50vh';
+                p.style.backgroundColor = `hsl(${Math.random()*360}, 70%, 60%)`;
+                document.body.appendChild(p);
+                p.animate([
+                    { transform: 'translate(0,0)', opacity: 1 },
+                    { transform: `translate(${(Math.random()-0.5)*600}px, ${(Math.random()-0.5)*600}px)`, opacity: 0 }
+                ], { duration: 1000, easing: 'ease-out' }).onfinish = () => p.remove();
+            }
+        },
+
+        render() {
+            const activeCont = document.getElementById('active-tasks');
+            const compCont = document.getElementById('completed-tasks');
+            activeCont.innerHTML = ''; compCont.innerHTML = '';
+
+            this.data.tasks.forEach(t => {
+                if(this.filter === 'focus' && t.due === 'ASAP' && !t.completed) return;
+                
+                const card = document.createElement('div');
+                card.className = `task-card ${t.completed ? 'completed' : ''}`;
+                card.onclick = () => this.toggle(t.id);
+                card.innerHTML = `
+                    <div class="check-circle">${t.completed ? '✓' : ''}</div>
+                    <div style="flex:1">
+                        <div class="task-text">${t.text}</div>
+                        <div style="margin-top:6px;"><span class="tag">⦿ ${t.due}</span></div>
+                    </div>
+                `;
+                (t.completed ? compCont : activeCont).appendChild(card);
+            });
+        }
+    };
+    app.init();
+</script>
+</body>
+</html>
