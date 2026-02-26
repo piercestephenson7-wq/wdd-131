@@ -1,0 +1,13 @@
+# Ignore API keys and secrets
+.env
+
+# Ignore OS-specific files
+.DS_Store
+Thumbs.db
+
+# Ignore Python specific files
+__pycache__/
+*.py[cod]
+
+# Ignore node_modules if you start using npm
+node_modules/
