@@ -1,0 +1,258 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Source+Sans+3:wght@400;600&display=swap');
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --forest: #2d4a2d;
+  --moss: #5c7a3e;
+  --stone: #8b7355;
+  --cream: #f5f0e8;
+  --bark: #3a2e1e;
+  --sky: #7aa8c4;
+  --sand: #e8dcc8;
+}
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  background-color: var(--cream);
+  color: var(--bark);
+  min-height: 100vh;
+  background-image:
+    radial-gradient(ellipse at 10% 0%, rgba(93,122,62,0.12) 0%, transparent 60%),
+    radial-gradient(ellipse at 90% 100%, rgba(122,168,196,0.1) 0%, transparent 50%);
+}
+
+header {
+  background: var(--forest);
+  padding: 2.5rem 2rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+header::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 6px;
+  background: linear-gradient(90deg, var(--moss), var(--sky), var(--stone), var(--moss));
+}
+
+header h1 {
+  font-family: 'Playfair Display', serif;
+  color: var(--cream);
+  font-size: clamp(2rem, 5vw, 3rem);
+  letter-spacing: 0.03em;
+}
+
+header p {
+  color: rgba(245,240,232,0.65);
+  margin-top: 0.4rem;
+  font-size: 1rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.search-bar {
+  display: flex;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-bar label {
+  display: none;
+}
+
+.search-bar input {
+  flex: 1;
+  padding: 0.75rem 1.25rem;
+  border: 2px solid var(--sand);
+  border-radius: 2px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 1rem;
+  background: white;
+  color: var(--bark);
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.search-bar input:focus { border-color: var(--moss); }
+
+.search-bar input::placeholder { color: #b0a898; }
+
+.search-bar button {
+  padding: 0.75rem 1.75rem;
+  background: var(--moss);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  font-family: 'Source Sans 3', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.search-bar button:hover { background: var(--forest); }
+.search-bar button:active { transform: scale(0.97); }
+
+#hike-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.75rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem 3rem;
+}
+
+.hike-card {
+  background: white;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(58,46,30,0.08);
+  transition: transform 0.25s, box-shadow 0.25s;
+  display: flex;
+  flex-direction: column;
+  animation: fadeUp 0.4s ease both;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.hike-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 28px rgba(58,46,30,0.14);
+}
+
+.hike-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  display: block;
+  background: var(--sand);
+}
+
+.hike-image-placeholder {
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(135deg, var(--sand) 0%, #d4c9b0 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 0.5rem;
+  color: var(--stone);
+  font-size: 0.85rem;
+  letter-spacing: 0.05em;
+}
+
+.hike-image-placeholder span { font-size: 2rem; }
+
+.hike-image-input-wrap {
+  padding: 0.6rem 1rem;
+  background: var(--cream);
+  border-bottom: 1px solid var(--sand);
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.hike-image-input-wrap input[type="url"] {
+  flex: 1;
+  padding: 0.35rem 0.6rem;
+  border: 1px solid #d4c9b0;
+  border-radius: 2px;
+  font-size: 0.8rem;
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--bark);
+  background: white;
+  outline: none;
+  transition: border-color 0.2s;
+}
+
+.hike-image-input-wrap input[type="url"]:focus { border-color: var(--moss); }
+
+.hike-image-input-wrap button {
+  padding: 0.35rem 0.75rem;
+  background: var(--stone);
+  color: white;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: background 0.2s;
+  white-space: nowrap;
+}
+
+.hike-image-input-wrap button:hover { background: var(--bark); }
+
+.hike-content {
+  padding: 1.25rem 1.25rem 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  flex: 1;
+}
+
+.hike-content h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: var(--forest);
+  line-height: 1.2;
+}
+
+.hike-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.hike-tags button {
+  padding: 0.25rem 0.75rem;
+  border: 1.5px solid var(--moss);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--moss);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+
+.hike-tags button:hover {
+  background: var(--moss);
+  color: white;
+}
+
+.hike-content p {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #6b5e4e;
+}
+
+.rating {
+  font-size: 1rem;
+  margin-left: 0.2rem;
+}
+
+.difficulty {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--stone);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  margin-top: auto;
+}

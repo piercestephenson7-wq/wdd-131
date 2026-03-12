@@ -105,3 +105,42 @@ articles.forEach((movie) => {
     `;
     moviesList.appendChild(article);
 });
+
+
+const randomNumbers = [5, 3, 8, 1, 2];
+
+randomNumbers.sort((a, b) => a - b);
+
+console.log(randomNumbers); // Output: [1, 2, 3, 5, 8]
+
+const randomLetters = ['d', 'a', 'c', 'b', 'E'];
+
+randomLetters.sort((a, b) => {
+    if (a.toLowerCase() < b.toLowerCase()) return -1;
+    else if (a.toLowerCase() > b.toLowerCase()) return 1;
+    return 0;
+});
+
+console.log(randomLetters); // Output: ['a', 'b', 'c', 'd', 'e']
+
+
+const ChaptersofBookofMormon = [
+    { title: "1 Nephi", chapters: 22 },
+    { title: "2 Nephi", chapters: 33 },
+    { title: "Jacob", chapters: 6 },
+    { title: "Enos", chapters: 1 },
+    { title: "Jarom", chapters: 1 },
+    { title: "Omni", chapters: 1 },
+    { title: "Words of Mormon", chapters: 1 },
+    { title: "Mosiah", chapters: 29 },
+    { title: "Alma", chapters: 63 },
+    { title: "Helaman", chapters: 16 },
+    { title: "3 Nephi", chapters: 30 },
+    { title: "4 Nephi", chapters: 1 },
+    { title: "Mormon", chapters: 9 },
+    { title: "Ether", chapters: 15 },
+    { title: "Moroni", chapters: 10 }
+];
+
+ChaptersofBookofMormon.filter((book) => book.chapters > 10)
+    .forEach((book) => console.log(book.title)); // Output: "1 Nephi", "2 Nephi", "Jacob"
