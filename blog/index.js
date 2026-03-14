@@ -49,7 +49,7 @@ articles.forEach(article => {
         <p><i>${article.date}</i></p>
         <p>${article.ages}</p>
         <p>${article.genre}</p>
-        <p>${article.stars}</p>
+        <p aria-label="${article.stars.length} out of 5 stars">${article.stars}</p>
       </div>
       <div class="book-content">
         <h2>${article.title}</h2>
