@@ -73,7 +73,7 @@ function displayCards() {
         
         servicesContainer.appendChild(cardElement);
     });
-  }
+}
 
 // Call the function to run it
 displayCards();
