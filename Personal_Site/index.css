@@ -1,4 +1,19 @@
-
+/* FONTS */
+@font-face {
+    font-family: "Bitcount";
+    src: url(fonts/Bitcount_Prop_Double/BitcountPropDouble-VariableFont_CRSV\,ELSH\,ELXP\,slnt\,wght.ttf)
+}
+@font-face {
+    font-family: "Delius";
+    src: url(fonts/Delius_Swash_Caps/DeliusSwashCaps-Regular.ttf)
+}
+@font-face {
+    font-family: "IBM";
+    src: url(fonts/IBM_Plex_Serif/IBMPlexSerif-Regular.ttf)
+}
+#logo h1 {
+    font-family: "Bitcount"
+}
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
