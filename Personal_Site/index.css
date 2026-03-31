@@ -11,8 +11,12 @@
     font-family: "IBM";
     src: url(fonts/IBM_Plex_Serif/IBMPlexSerif-Regular.ttf)
 }
-#logo h1 {
-    font-family: "Bitcount"
+#logo h1, h2 {
+    font-family: "Delius"
+}
+h2 {
+    justify-content: center;
+    display: flex;
 }
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -49,9 +53,10 @@ button {
     background: rgb(85, 201, 239);
     border: none;
     padding: 12px 24px;
-    font-weight: bold;
     cursor: pointer;
     border-radius: 5px;
+    font-family: "Bitcount";
+    font-size: 16px;
 }
 #services {
     display: grid;

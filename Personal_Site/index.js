@@ -1,4 +1,6 @@
 //PRICE CALCULATOR
+const calculateBtn = document.getElementById('calculate-btn');
+calculateBtn.addEventListener('click', calculatePrice);
 
 function calculatePrice() {
     const sqft = document.getElementById('sqft').value;
