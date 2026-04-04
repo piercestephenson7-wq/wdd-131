@@ -20,8 +20,6 @@
     margin: 0;
 }
 
-/* LIST OF SERVICE ROWS */
-
 .services-list {
     max-width: 1000px;
     margin: 3rem auto;
@@ -30,8 +28,6 @@
     flex-direction: column;
     gap: 2rem;
 }
-
-/* INDIVIDUAL ROW: image left, text right */
 
 .service-row {
     display: flex;
@@ -77,7 +73,6 @@
     align-self: flex-start;
 }
 
-/* CONTACT STRIP */
 
 #contact {
     text-align: center;
@@ -87,9 +82,8 @@
     margin-top: 3rem;
 }
 
-/* RESPONSIVE: stack on small screens */
 
-@media (max-width: 600px) {
+@media (max-width: 768px) {
     .service-row {
         flex-direction: column;
     }
